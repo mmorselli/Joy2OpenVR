@@ -26,6 +26,7 @@ namespace
 	Texts texts;
 	std::ostringstream sstr;
 	float threshold = 1.0f;
+	float axisvalue = 0;
 
 	// ini main
 	CString steamvr_controller1_id;
@@ -100,7 +101,7 @@ namespace
 	// associate axes to controller id
 	void Axes2Controller(CString steamvr_ctrl1_id, CString steamvr_ctrl2_id)
 	{
-		if (xy_axes == (CString)"trackpad1")
+		if (xy_axes == (CString)"trackpad1" || xy_axes == (CString)"trigger1")
 		{
 			xyctrlid = steamvr_ctrl1_id;
 		}
@@ -108,7 +109,7 @@ namespace
 			xyctrlid = steamvr_ctrl2_id;
 		}
 
-		if (zr_axes == (CString)"trackpad1")
+		if (zr_axes == (CString)"trackpad1" || zr_axes == (CString)"trigger1")
 		{
 			zrctrlid = steamvr_ctrl1_id;
 		}
@@ -116,7 +117,7 @@ namespace
 			zrctrlid = steamvr_ctrl2_id;
 		}
 
-		if (uv_axes == (CString)"trackpad1")
+		if (uv_axes == (CString)"trackpad1" || uv_axes == (CString)"trigger1")
 		{
 			uvctrlid = steamvr_ctrl1_id;
 		}
@@ -422,7 +423,7 @@ namespace
 		// X
 		if (sf::Joystick::hasAxis(index, static_cast<sf::Joystick::Axis>(0)))
 		{
-			float axisvalue = sf::Joystick::getAxisPosition(index, static_cast<sf::Joystick::Axis>(0)) / 100;
+			axisvalue = sf::Joystick::getAxisPosition(index, static_cast<sf::Joystick::Axis>(0)) / 100;
 			if (axisvalue > -0.2 && axisvalue < 0.2) 
 			{ 
 				axisvalue = 0;
@@ -442,7 +443,7 @@ namespace
 		// Y
 		if (sf::Joystick::hasAxis(index, static_cast<sf::Joystick::Axis>(1)))
 		{
-			float axisvalue = sf::Joystick::getAxisPosition(index, static_cast<sf::Joystick::Axis>(1)) / 100;
+			axisvalue = sf::Joystick::getAxisPosition(index, static_cast<sf::Joystick::Axis>(1)) / 100;
 			// y is inverted on Vive trackpad
 			axisvalue = -axisvalue;
 			if (axisvalue > -0.2 && axisvalue < 0.2)
@@ -462,15 +463,28 @@ namespace
 
 		if (xychanged)
 		{
-			Axis_Set(xyctrlid, xstraxisvalue, ystraxisvalue);
-			if (touchpadpressed)
+			if (xy_axes == (CString)"trackpad1" || xy_axes == (CString)"trackpad2")
 			{
-				lastcmd = "Axis X,Y >> id " + xyctrlid + ": " + xstraxisvalue + "," + ystraxisvalue + " (pressed)";
+				Axis_Set(xyctrlid, xstraxisvalue, ystraxisvalue);
+				if (touchpadpressed)
+				{
+					lastcmd = "Axis X,Y >> id " + xyctrlid + ": " + xstraxisvalue + "," + ystraxisvalue + " (pressed)";
+				}
+				else {
+					lastcmd = "Axis X,Y >> id " + xyctrlid + ": " + xstraxisvalue + "," + ystraxisvalue;
+				}
+				texts["LastCommand"].value.setString((sf::String)lastcmd);
 			}
 			else {
-				lastcmd = "Axis X,Y >> id " + xyctrlid + ": " + xstraxisvalue + "," + ystraxisvalue;
+				// trigger event: xbox 360 triggers act as single axis in -100 +100 range
+				if (axisvalue != 0)
+				{
+					trigger_down(xyctrlid);
+				}
+				else {
+					trigger_up(xyctrlid);
+				}
 			}
-			texts["LastCommand"].value.setString((sf::String)lastcmd);
 			xychanged = false;
 		}
 
@@ -481,7 +495,7 @@ namespace
 		// Z
 		if (sf::Joystick::hasAxis(index, static_cast<sf::Joystick::Axis>(2)))
 		{
-			float axisvalue = sf::Joystick::getAxisPosition(index, static_cast<sf::Joystick::Axis>(2)) / 100;
+			axisvalue = sf::Joystick::getAxisPosition(index, static_cast<sf::Joystick::Axis>(2)) / 100;
 			// y is inverted on SteamVR
 			axisvalue = -axisvalue;
 			if (axisvalue > -0.2 && axisvalue < 0.2)
@@ -502,7 +516,7 @@ namespace
 		// R
 		if (sf::Joystick::hasAxis(index, static_cast<sf::Joystick::Axis>(3)))
 		{
-			float axisvalue = sf::Joystick::getAxisPosition(index, static_cast<sf::Joystick::Axis>(3)) / 100;
+			axisvalue = sf::Joystick::getAxisPosition(index, static_cast<sf::Joystick::Axis>(3)) / 100;
 			if (axisvalue > -0.2 && axisvalue < 0.2)
 			{
 				axisvalue = 0;
@@ -521,15 +535,29 @@ namespace
 
 		if (zrchanged)
 		{
-			Axis_Set(zrctrlid, rstraxisvalue, zstraxisvalue);
-			if (touchpadpressed)
+			//std::cout << "zrchanged" << std::endl;
+			if (zr_axes == (CString)"trackpad1" || zr_axes == (CString)"trackpad2")
 			{
-				lastcmd = "Axis Z,R >> id " + zrctrlid + ": " + rstraxisvalue + "," + zstraxisvalue + " (pressed)";
+				Axis_Set(zrctrlid, rstraxisvalue, zstraxisvalue);
+				if (touchpadpressed)
+				{
+					lastcmd = "Axis Z,R >> id " + zrctrlid + ": " + rstraxisvalue + "," + zstraxisvalue + " (pressed)";
+				}
+				else {
+					lastcmd = "Axis Z,R >> id " + zrctrlid + ": " + rstraxisvalue + "," + zstraxisvalue;
+				}
+				texts["LastCommand"].value.setString((sf::String)lastcmd);
 			}
 			else {
-				lastcmd = "Axis Z,R >> id " + zrctrlid + ": " + rstraxisvalue + "," + zstraxisvalue;
+				// trigger event: xbox 360 triggers act as single axis in -100 +100 range
+				if (axisvalue != 0)
+				{
+					trigger_down(zrctrlid);
+				}
+				else {
+					trigger_up(zrctrlid);
+				}
 			}
-			texts["LastCommand"].value.setString((sf::String)lastcmd);
 			zrchanged = false;
 		}
 
@@ -539,7 +567,7 @@ namespace
 		// U
 		if (sf::Joystick::hasAxis(index, static_cast<sf::Joystick::Axis>(4)))
 		{
-			float axisvalue = sf::Joystick::getAxisPosition(index, static_cast<sf::Joystick::Axis>(4)) / 100;
+			axisvalue = sf::Joystick::getAxisPosition(index, static_cast<sf::Joystick::Axis>(4)) / 100;
 			// y is inverted on SteamVR
 			axisvalue = -axisvalue;
 			if (axisvalue > -0.2 && axisvalue < 0.2)
@@ -560,7 +588,7 @@ namespace
 		// V
 		if (sf::Joystick::hasAxis(index, static_cast<sf::Joystick::Axis>(5)))
 		{
-			float axisvalue = sf::Joystick::getAxisPosition(index, static_cast<sf::Joystick::Axis>(5)) / 100;
+			axisvalue = sf::Joystick::getAxisPosition(index, static_cast<sf::Joystick::Axis>(5)) / 100;
 			if (axisvalue > -0.2 && axisvalue < 0.2)
 			{
 				axisvalue = 0;
@@ -579,15 +607,28 @@ namespace
 
 		if (uvchanged)
 		{
-			Axis_Set(uvctrlid, rstraxisvalue, zstraxisvalue);
-			if (touchpadpressed)
+			if (uv_axes == (CString)"trackpad1" || uv_axes == (CString)"trackpad2")
 			{
-				lastcmd = "Axis U,V >> id " + uvctrlid + ": " + rstraxisvalue + "," + zstraxisvalue + " (pressed)";
+				Axis_Set(uvctrlid, rstraxisvalue, zstraxisvalue);
+				if (touchpadpressed)
+				{
+					lastcmd = "Axis U,V >> id " + uvctrlid + ": " + rstraxisvalue + "," + zstraxisvalue + " (pressed)";
+				}
+				else {
+					lastcmd = "Axis U,V >> id " + uvctrlid + ": " + rstraxisvalue + "," + zstraxisvalue;
+				}
+				texts["LastCommand"].value.setString((sf::String)lastcmd);
 			}
 			else {
-				lastcmd = "Axis U,V >> id " + uvctrlid + ": " + rstraxisvalue + "," + zstraxisvalue;
+				// trigger event: xbox 360 triggers act as single axis in -100 +100 range
+				if (axisvalue != 0)
+				{
+					trigger_down(uvctrlid);
+				}
+				else {
+					trigger_up(uvctrlid);
+				}
 			}
-			texts["LastCommand"].value.setString((sf::String)lastcmd);
 			uvchanged = false;
 		}
 
@@ -656,15 +697,15 @@ int main(int argc,char *argv[])
 
 
 	// axes
-	xy_axes = (char *)ini.GetValue("trackpad", "xy_axes", "");
-	zr_axes = (char *)ini.GetValue("trackpad", "zr_axes", "");
-	uv_axes = (char *)ini.GetValue("trackpad", "uv_axes", "");
+	xy_axes = (char *)ini.GetValue("axes", "xy_axes", "");
+	zr_axes = (char *)ini.GetValue("axes", "zr_axes", "");
+	uv_axes = (char *)ini.GetValue("axes", "uv_axes", "");
 
 	Axes2Controller(steamvr_controller1_id, steamvr_controller2_id); // associate trackpad num to controller id
 
 
-	trackpad1_click = std::stoi(ini.GetValue("trackpad", "trackpad1_click", 0));
-	trackpad2_click = std::stoi(ini.GetValue("trackpad", "trackpad2_click", 0));
+	trackpad1_click = std::stoi(ini.GetValue("axes", "trackpad1_click", 0));
+	trackpad2_click = std::stoi(ini.GetValue("axes", "trackpad2_click", 0));
 
 	sf::String profile = (sf::String)ini.GetValue("main", "profile", "0");
 
@@ -672,7 +713,7 @@ int main(int argc,char *argv[])
 
 	// Create the window of the application
 	sf::String appname="Joy2OpenVR ";
-	appname += "0.3b";
+	appname += "0.4b";
 	sf::RenderWindow window(sf::VideoMode(600, 780), appname, sf::Style::Close);
 	window.setVerticalSyncEnabled(true);
 
