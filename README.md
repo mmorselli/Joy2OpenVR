@@ -3,3 +3,5 @@ Interface to OpenVR Input Emulator to translate any Direct Input controllers com
 
 
 ![alt screenshot](https://github.com/mmorselli/Joy2OpenVR/blob/master/assets/screenshot.png)
+
+dependencies: SFML-2.5.0
