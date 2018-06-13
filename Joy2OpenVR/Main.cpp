@@ -65,6 +65,8 @@ namespace
 	// trackpad modifier, click if pressed, touch otherwise
 	bool p_trackpad1_click = false;
 	bool p_trackpad2_click = false;
+	bool trackpad1_click_reverse;
+	bool trackpad2_click_reverse;
 
 	DWORD exitCode = 0;
 	CString lastcmd;
@@ -384,18 +386,33 @@ namespace
 	//************************************************
 	void Axis_Set(CString id, CString xvalue, CString yvalue)
 	{
+		// touch event at x,y
 		executeCommandLine("client_commandline.exe buttonevent touchandhold " + id + "  32", exitCode);
 		executeCommandLine("client_commandline.exe axisevent " + id + "  0 "+ xvalue+" "+yvalue, exitCode);
 		
-		if ((p_trackpad1_click && id == steamvr_controller1_id) || (p_trackpad2_click && id == steamvr_controller2_id))
+		// emulate trackpad click
+		if (id == steamvr_controller1_id && (!p_trackpad1_click == trackpad1_click_reverse))
 		{
 			executeCommandLine("client_commandline.exe buttonevent pressandhold " + id + "  32", exitCode); // touchpad pressed
 			touchpadpressed = true;
+			return;
 		}
-		else {
+
+
+		if (id == steamvr_controller2_id && (!p_trackpad2_click == trackpad2_click_reverse))
+		{
+			executeCommandLine("client_commandline.exe buttonevent pressandhold " + id + "  32", exitCode); // touchpad pressed
+			touchpadpressed = true;
+			return; 
+		}
+
+		// if pressed, but no click request, unpress
+		if (touchpadpressed)
+		{
 			executeCommandLine("client_commandline.exe buttonevent unpress " + id + "  32", exitCode); // touchpad unpressed
 			touchpadpressed = false;
 		}
+
 	}
 
 
@@ -658,7 +675,10 @@ namespace
 	}
 
 
-
+	// string to bool
+	bool ToBool(const std::string & s) {
+		return s == "true";
+	}
 
 }
 
@@ -710,10 +730,16 @@ int main(int argc,char *argv[])
 	sf::String profile = (sf::String)ini.GetValue("main", "profile", "0");
 
 
+	trackpad1_click_reverse = ToBool(ini.GetValue("axes", "trackpad1_click_reverse", "false"));
+	trackpad2_click_reverse = ToBool(ini.GetValue("axes", "trackpad2_click_reverse", "false"));
+
+
+
+
 
 	// Create the window of the application
 	sf::String appname="Joy2OpenVR ";
-	appname += "0.4b";
+	appname += "0.5b";
 	sf::RenderWindow window(sf::VideoMode(600, 780), appname, sf::Style::Close);
 	window.setVerticalSyncEnabled(true);
 
