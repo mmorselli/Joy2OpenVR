@@ -26,6 +26,7 @@ namespace
 	Texts texts;
 	std::ostringstream sstr;
 	float threshold = 1.0f;
+	float deadzonerange = 0.2f;
 	float axisvalue = 0;
 
 	// ini main
@@ -441,7 +442,7 @@ namespace
 		if (sf::Joystick::hasAxis(index, static_cast<sf::Joystick::Axis>(0)))
 		{
 			axisvalue = sf::Joystick::getAxisPosition(index, static_cast<sf::Joystick::Axis>(0)) / 100;
-			if (axisvalue > -0.2 && axisvalue < 0.2) 
+			if (axisvalue > -deadzonerange && axisvalue < deadzonerange) 
 			{ 
 				axisvalue = 0;
 			}
@@ -463,7 +464,7 @@ namespace
 			axisvalue = sf::Joystick::getAxisPosition(index, static_cast<sf::Joystick::Axis>(1)) / 100;
 			// y is inverted on Vive trackpad
 			axisvalue = -axisvalue;
-			if (axisvalue > -0.2 && axisvalue < 0.2)
+			if (axisvalue > -deadzonerange && axisvalue < deadzonerange)
 			{
 				axisvalue = 0;
 			}
@@ -515,7 +516,7 @@ namespace
 			axisvalue = sf::Joystick::getAxisPosition(index, static_cast<sf::Joystick::Axis>(2)) / 100;
 			// y is inverted on SteamVR
 			axisvalue = -axisvalue;
-			if (axisvalue > -0.2 && axisvalue < 0.2)
+			if (axisvalue > -deadzonerange && axisvalue < deadzonerange)
 			{
 				axisvalue = 0;
 			}
@@ -534,7 +535,7 @@ namespace
 		if (sf::Joystick::hasAxis(index, static_cast<sf::Joystick::Axis>(3)))
 		{
 			axisvalue = sf::Joystick::getAxisPosition(index, static_cast<sf::Joystick::Axis>(3)) / 100;
-			if (axisvalue > -0.2 && axisvalue < 0.2)
+			if (axisvalue > -deadzonerange && axisvalue < deadzonerange)
 			{
 				axisvalue = 0;
 			}
@@ -587,7 +588,7 @@ namespace
 			axisvalue = sf::Joystick::getAxisPosition(index, static_cast<sf::Joystick::Axis>(4)) / 100;
 			// y is inverted on SteamVR
 			axisvalue = -axisvalue;
-			if (axisvalue > -0.2 && axisvalue < 0.2)
+			if (axisvalue > -deadzonerange && axisvalue < deadzonerange)
 			{
 				axisvalue = 0;
 			}
@@ -606,7 +607,7 @@ namespace
 		if (sf::Joystick::hasAxis(index, static_cast<sf::Joystick::Axis>(5)))
 		{
 			axisvalue = sf::Joystick::getAxisPosition(index, static_cast<sf::Joystick::Axis>(5)) / 100;
-			if (axisvalue > -0.2 && axisvalue < 0.2)
+			if (axisvalue > -deadzonerange && axisvalue < deadzonerange)
 			{
 				axisvalue = 0;
 			}
@@ -704,6 +705,7 @@ int main(int argc,char *argv[])
 	steamvr_controller1_id = (CString)ini.GetValue("main", "steamvr_controller1_id", "0");
 	steamvr_controller2_id = (CString)ini.GetValue("main", "steamvr_controller2_id", "0");
 	threshold = atof(ini.GetValue("main", "threshold", "1.0"));
+	deadzonerange = atof(ini.GetValue("main", "deadzonerange", "0.2"));
 
 	trigger1 = std::stoi(ini.GetValue("buttons", "trigger1", "99"));
 	menu1 = std::stoi(ini.GetValue("buttons", "menu1", "99"));
@@ -739,7 +741,7 @@ int main(int argc,char *argv[])
 
 	// Create the window of the application
 	sf::String appname="Joy2OpenVR ";
-	appname += "0.5b";
+	appname += "0.6b";
 	sf::RenderWindow window(sf::VideoMode(600, 780), appname, sf::Style::Close);
 	window.setVerticalSyncEnabled(true);
 
