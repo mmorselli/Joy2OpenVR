@@ -1,4 +1,5 @@
 ﻿#include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
@@ -16,6 +17,7 @@ namespace
 
 
 
+
 	struct JoystickObject
 	{
 		sf::Text label;
@@ -28,6 +30,10 @@ namespace
 	float threshold = 1.0f;
 	float deadzonerange = 0.2f;
 	float axisvalue = 0;
+
+
+
+
 
 	// ini main
 	CString steamvr_controller1_id;
@@ -43,6 +49,16 @@ namespace
 	unsigned int menu2;
 	unsigned int system2;
 	unsigned int grip2;
+
+	// ini buttons (keyboard)
+	CString ktrigger1;
+	CString kmenu1;
+	CString ksystem1;
+	CString kgrip1;
+	CString ktrigger2;
+	CString kmenu2;
+	CString ksystem2;
+	CString kgrip2;
 
 	// ini trackpad
 	char * xy_axes;
@@ -76,6 +92,8 @@ namespace
 	CString xyctrlid;
 	CString zrctrlid;
 	CString uvctrlid;
+
+	bool windowontop = false;
 
 
 	// Axes labels in as C strings
@@ -224,10 +242,9 @@ namespace
 
 
 	//************************************************
-	// Buttons actions
-	void ButtonToAction(unsigned int index)
+	// Buttons press
+	void ButtonPress(unsigned int index)
 	{
-
 
 		// controller1 buttons
 
@@ -236,15 +253,8 @@ namespace
 		{
 			trigger_down(steamvr_controller1_id);
 			p_trigger1 = true;
-		}
-		else {
-			if (p_trigger1)
-			{
-				trigger_up(steamvr_controller1_id);
-				p_trigger1 = false; 
-			}
-		}
 
+		}
 
 		// menu1
 		if (sf::Joystick::isButtonPressed(index, menu1))
@@ -252,13 +262,7 @@ namespace
 			menu_down(steamvr_controller1_id);
 			p_menu1 = true;
 		}
-		else {
-			if (p_menu1)
-			{
-				menu_up(steamvr_controller1_id);
-				p_menu1 = false;
-			}
-		}
+
 
 
 		// system1
@@ -267,13 +271,6 @@ namespace
 			system_down(steamvr_controller1_id);
 			p_system1 = true;
 		}
-		else {
-			if (p_system1)
-			{
-				system_up(steamvr_controller1_id);
-				p_system1 = false;
-			}
-		}
 
 
 		// grip1
@@ -281,13 +278,6 @@ namespace
 		{
 			grip_down(steamvr_controller1_id);
 			p_grip1 = true;
-		}
-		else {
-			if (p_grip1)
-			{
-				grip_up(steamvr_controller1_id);
-				p_grip1 = false;
-			}
 		}
 
 
@@ -300,14 +290,6 @@ namespace
 			trigger_down(steamvr_controller2_id);
 			p_trigger2 = true;
 		}
-		else {
-			if (p_trigger2)
-			{
-				trigger_up(steamvr_controller2_id);
-				p_trigger2 = false;
-			}
-		}
-
 
 		// menu2
 		if (sf::Joystick::isButtonPressed(index, menu2))
@@ -315,27 +297,13 @@ namespace
 			menu_down(steamvr_controller2_id);
 			p_menu2 = true;
 		}
-		else {
-			if (p_menu2)
-			{
-				menu_up(steamvr_controller2_id);
-				p_menu2 = false;
-			}
-		}
 
 
 		// system2
 		if (sf::Joystick::isButtonPressed(index, system2))
 		{
-			system_down(steamvr_controller2_id);
+			system_down(steamvr_controller2_id); 
 			p_system2 = true;
-		}
-		else {
-			if (p_system2)
-			{
-				system_up(steamvr_controller2_id);
-				p_system2 = false;
-			}
 		}
 
 
@@ -345,44 +313,103 @@ namespace
 			grip_down(steamvr_controller2_id);
 			p_grip2 = true;
 		}
-		else {
-			if (p_grip2)
-			{
-				grip_up(steamvr_controller2_id);
-				p_grip2 = false;
-			}
-		}
 
 
 		// trackpad1_click
 		if (sf::Joystick::isButtonPressed(index, trackpad1_click))
 		{
-			p_trackpad1_click = true;
+			p_trackpad1_click = true;			
+		} else { 
+			p_trackpad1_click = false; 
 		}
-		else {
-			if (p_trackpad1_click)
-			{
-				p_trackpad1_click = false;
-			}
-		}
-
 
 		// trackpad2_click
 		if (sf::Joystick::isButtonPressed(index, trackpad2_click))
 		{
 			p_trackpad2_click = true;
+		} else { 
+			p_trackpad2_click = false; 
 		}
-		else {
-			if (p_trackpad2_click)
-			{
-				p_trackpad2_click = false;
-			}
-		}
+
 
 
 	}
 
+	//************************************************
+	// Buttons release
+	void ButtonRelease()
+	{
 
+		// controller1 buttons
+
+		// trigger1
+		if (p_trigger1)
+		{
+			trigger_up(steamvr_controller1_id);
+			p_trigger1 = false;
+		}
+
+		// menu1
+		if (p_menu1)
+		{
+			menu_up(steamvr_controller1_id);
+			p_menu1 = false;
+		}
+
+
+
+		// system1
+		if (p_system1)
+		{
+			system_up(steamvr_controller1_id);
+			p_system1 = false;
+		}
+
+
+		// grip1
+		if (p_grip1)
+		{
+			grip_up(steamvr_controller1_id);
+			p_grip1 = false;
+		}
+
+
+
+		// controller2 buttons
+
+		// trigger2
+		if (p_trigger2)
+		{
+			trigger_up(steamvr_controller2_id);
+			p_trigger2 = false;
+		}
+
+		// menu2
+		if (p_menu2)
+		{
+			menu_up(steamvr_controller2_id);
+			p_menu2 = false;
+		}
+
+
+
+		// system2
+		if (p_system2)
+		{
+			system_up(steamvr_controller2_id);
+			p_system2 = false;
+		}
+
+
+		// grip2
+		if (p_grip2)
+		{
+			grip_up(steamvr_controller2_id);
+			p_grip2 = false;
+		}
+
+
+	}
 
 	//************************************************
 	void Axis_Set(CString id, CString xvalue, CString yvalue)
@@ -655,6 +682,74 @@ namespace
 	}
 
 
+
+	//************************************************
+	// KeyToAction
+	void KeyToAction(CString keypressed,bool pressed)
+	{
+
+		// controller1 buttons
+
+		// trigger1
+		if (keypressed == ktrigger1)
+		{
+			if (pressed) { trigger_down(steamvr_controller1_id); } else { trigger_up(steamvr_controller1_id); }
+		}
+
+
+		// menu1
+		if (keypressed == kmenu1)
+		{
+			if (pressed) { menu_down(steamvr_controller1_id); }	else { menu_up(steamvr_controller1_id); }
+		}
+		
+
+		// system1
+		if (keypressed == ksystem1)
+		{
+			if (pressed) { system_down(steamvr_controller1_id); } else { system_up(steamvr_controller1_id); }
+		}
+
+
+		// grip1
+		if (keypressed == kgrip1)
+		{
+			if (pressed) { grip_down(steamvr_controller1_id); } else { grip_up(steamvr_controller1_id); }
+		}
+
+
+		// controller2 buttons
+
+		// trigger2
+		if (keypressed == ktrigger2)
+		{
+			if (pressed) { trigger_down(steamvr_controller2_id); } else { trigger_up(steamvr_controller2_id); }
+		}
+
+
+		// menu2
+		if (keypressed == kmenu2)
+		{
+			if (pressed) { menu_down(steamvr_controller2_id); } else { menu_up(steamvr_controller2_id); }
+		}
+
+
+		// system2
+		if (keypressed == ksystem2)
+		{
+			if (pressed) { system_down(steamvr_controller2_id); } else { system_up(steamvr_controller2_id); }
+		}
+
+
+		// grip2
+		if (keypressed == kgrip2)
+		{
+			if (pressed) { grip_down(steamvr_controller2_id); } else { grip_up(steamvr_controller2_id); }
+		}
+
+	}
+
+
 	// Helper to update displayed joystick values
 	void updateValues(unsigned int index)
 	{
@@ -681,7 +776,15 @@ namespace
 		return s == "true";
 	}
 
+
+	void makeWindowOnTop(sf::RenderWindow& window)
+	{
+		HWND hwnd = window.getSystemHandle();
+		SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	}
+
 }
+
 
 
 ////////////////////////////////////////////////////////////
@@ -691,6 +794,15 @@ int main(int argc,char *argv[])
 {
 
 	// std::cout << "argc " << argc << argv[1] << std::endl;
+
+
+	// initialize sound
+	sf::SoundBuffer clickbuffer;
+	sf::Sound click;
+	if (!clickbuffer.loadFromFile("resources/click.wav"))
+		return -1;
+	click.setBuffer(clickbuffer);
+
 
 	// read configuration
 	CSimpleIniA ini;
@@ -706,16 +818,29 @@ int main(int argc,char *argv[])
 	steamvr_controller2_id = (CString)ini.GetValue("main", "steamvr_controller2_id", "0");
 	threshold = atof(ini.GetValue("main", "threshold", "1.0"));
 	deadzonerange = atof(ini.GetValue("main", "deadzonerange", "0.2"));
+	windowontop = ToBool(ini.GetValue("main", "WindowOnTop", "false"));
 
-	trigger1 = std::stoi(ini.GetValue("buttons", "trigger1", "99"));
-	menu1 = std::stoi(ini.GetValue("buttons", "menu1", "99"));
-	system1 = std::stoi(ini.GetValue("buttons", "system1", "99"));
-	grip1 = std::stoi(ini.GetValue("buttons", "grip1", "99"));
+	// xinput prefs
+	trigger1 = std::stoi(ini.GetValue("buttons", "trigger1", "999"));
+	menu1 = std::stoi(ini.GetValue("buttons", "menu1", "999"));
+	system1 = std::stoi(ini.GetValue("buttons", "system1", "999"));
+	grip1 = std::stoi(ini.GetValue("buttons", "grip1", "999"));
 
-	trigger2 = std::stoi(ini.GetValue("buttons", "trigger2", "99"));
-	menu2 = std::stoi(ini.GetValue("buttons", "menu2", "99"));
-	system2 = std::stoi(ini.GetValue("buttons", "system2", "99"));
-	grip2 = std::stoi(ini.GetValue("buttons", "grip2", "99"));
+	trigger2 = std::stoi(ini.GetValue("buttons", "trigger2", "999"));
+	menu2 = std::stoi(ini.GetValue("buttons", "menu2", "999"));
+	system2 = std::stoi(ini.GetValue("buttons", "system2", "999"));
+	grip2 = std::stoi(ini.GetValue("buttons", "grip2", "999"));
+
+	// keyboard prefs
+	ktrigger1 = (CString)ini.GetValue("keys", "trigger1", "999");
+	kmenu1 = (CString)ini.GetValue("keys", "menu1", "999");
+	ksystem1 = (CString)ini.GetValue("keys", "system1", "999");
+	kgrip1 = (CString)ini.GetValue("keys", "grip1", "999");
+
+	ktrigger2 = (CString)ini.GetValue("keys", "trigger2", "999");
+	kmenu2 = (CString)ini.GetValue("keys", "menu2", "999");
+	ksystem2 = (CString)ini.GetValue("keys", "system2", "999");
+	kgrip2 = (CString)ini.GetValue("keys", "grip2", "999");
 
 
 	// axes
@@ -739,9 +864,10 @@ int main(int argc,char *argv[])
 
 
 
+
 	// Create the window of the application
 	sf::String appname="Joy2OpenVR ";
-	appname += "0.6b";
+	appname += "0.9b";
 	sf::RenderWindow window(sf::VideoMode(600, 780), appname, sf::Style::Close);
 	window.setVerticalSyncEnabled(true);
 
@@ -896,14 +1022,40 @@ int main(int argc,char *argv[])
 				window.close();
 				break;
 			}
-			else if ((event.type == sf::Event::JoystickButtonPressed) ||
-				(event.type == sf::Event::JoystickButtonReleased) ||
-				(event.type == sf::Event::JoystickMoved) ||
-				(event.type == sf::Event::JoystickConnected))
+			else if (event.type == sf::Event::KeyPressed)
+			{
+				//std::cout << event.key.code << std::endl;
+				CString keypressed;
+				keypressed.Format(_T("%d"), event.size.width);
+				texts["LastCommand"].value.setString((sf::String)("key pressed: "+keypressed));
+				KeyToAction(keypressed,true);
+			}
+			else if (event.type == sf::Event::KeyReleased)
+			{
+				//std::cout << event.key.code << std::endl;
+				CString keypressed;
+				keypressed.Format(_T("%d"), event.size.width);
+				texts["LastCommand"].value.setString((sf::String)("key released: " + keypressed));
+				KeyToAction(keypressed,false);
+			}
+			else if (event.type == sf::Event::JoystickConnected)
 			{
 				// Update displayed joystick values
 				updateValues(event.joystickConnect.joystickId);
-				ButtonToAction(event.joystickConnect.joystickId);
+			}
+			else if(event.type == sf::Event::JoystickButtonPressed)
+			{
+				updateValues(event.joystickConnect.joystickId);
+				ButtonPress(event.joystickConnect.joystickId);
+			}
+			else if (event.type == sf::Event::JoystickButtonReleased)
+			{
+				updateValues(event.joystickConnect.joystickId);
+				ButtonRelease();
+			}
+			else if (event.type == sf::Event::JoystickMoved)
+			{
+				updateValues(event.joystickConnect.joystickId);
 				AxesToAction(event.joystickConnect.joystickId);
 			}
 			else if (event.type == sf::Event::JoystickDisconnected)
@@ -954,6 +1106,10 @@ int main(int argc,char *argv[])
 					Axes2Controller(steamvr_controller1_id, steamvr_controller2_id); // re-associate trackpad num to controller id
 					texts["SteamVr1ID"].value.setString((sf::String)steamvr_controller1_id+" - Button "+ toString(trackpad1_click)+" as trackpad click");
 					texts["SteamVr2ID"].value.setString((sf::String)steamvr_controller2_id + " - Button " + toString(trackpad2_click) + " as trackpad click");
+					click.play();
+
+
+
 				}
 				if (invertAxesButtonImage.getGlobalBounds().contains(mousePosF))
 				{
@@ -963,6 +1119,7 @@ int main(int argc,char *argv[])
 					trackpad2_click = temp_trackpad_click;
 					texts["SteamVr1ID"].value.setString((sf::String)steamvr_controller1_id + " - Button " + toString(trackpad1_click) + " as trackpad click");
 					texts["SteamVr2ID"].value.setString((sf::String)steamvr_controller2_id + " - Button " + toString(trackpad2_click) + " as trackpad click");
+					click.play();
 				}
 			}
 
@@ -986,5 +1143,10 @@ int main(int argc,char *argv[])
 
 		// Display things on screen
 		window.display();
+
+		if (windowontop) { makeWindowOnTop(window); }
+
+
+
 	}
 }
