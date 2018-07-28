@@ -15,9 +15,6 @@
 namespace
 {
 
-
-
-
 	struct JoystickObject
 	{
 		sf::Text label;
@@ -30,10 +27,6 @@ namespace
 	float threshold = 1.0f;
 	float deadzonerange = 0.2f;
 	float axisvalue = 0;
-
-
-
-
 
 	// ini main
 	CString steamvr_controller1_id;
@@ -94,6 +87,7 @@ namespace
 	CString uvctrlid;
 
 	bool windowontop = false;
+	HWND activewindow;
 
 
 	// Axes labels in as C strings
@@ -861,10 +855,6 @@ int main(int argc,char *argv[])
 	trackpad2_click_reverse = ToBool(ini.GetValue("axes", "trackpad2_click_reverse", "false"));
 
 
-
-
-
-
 	// Create the window of the application
 	sf::String appname="Joy2OpenVR ";
 	appname += "0.9b";
@@ -916,8 +906,6 @@ int main(int argc,char *argv[])
 
 
 
-
-
 	// Set up our string conversion parameters
 	sstr.precision(2);
 	sstr.setf(std::ios::fixed | std::ios::boolalpha);
@@ -949,12 +937,6 @@ int main(int argc,char *argv[])
 
 	texts["SteamVr2ID"].label.setString("Target SteamVR Controller 2 ID:");
 	texts["SteamVr2ID"].value.setString((sf::String)steamvr_controller2_id + " - Button " + toString(trackpad2_click) + " as trackpad click");
-
-
-
-
-
-
 
 	texts["LastCommand"].label.setPosition(5.f, 5.f + 5 * font.getLineSpacing(14));
 	texts["LastCommand"].value.setPosition(80.f, 5.f + 5 * font.getLineSpacing(14));
@@ -1107,9 +1089,6 @@ int main(int argc,char *argv[])
 					texts["SteamVr1ID"].value.setString((sf::String)steamvr_controller1_id+" - Button "+ toString(trackpad1_click)+" as trackpad click");
 					texts["SteamVr2ID"].value.setString((sf::String)steamvr_controller2_id + " - Button " + toString(trackpad2_click) + " as trackpad click");
 					click.play();
-
-
-
 				}
 				if (invertAxesButtonImage.getGlobalBounds().contains(mousePosF))
 				{
@@ -1122,12 +1101,18 @@ int main(int argc,char *argv[])
 					click.play();
 				}
 			}
+			else if (event.type == sf::Event::LostFocus)
+			{
+				if (windowontop)
+				{
+					SetForegroundWindow(activewindow);
+				}
+			}
 
 
 		}
 
 		
-
 		// Clear the window
 		window.clear(sf::Color(28, 41, 57));
 
@@ -1144,9 +1129,12 @@ int main(int argc,char *argv[])
 		// Display things on screen
 		window.display();
 
-		if (windowontop) { makeWindowOnTop(window); }
-
-
+		// always on top? (needed for keyboard input)
+		if (windowontop)
+		{ 
+			activewindow = GetActiveWindow();
+			makeWindowOnTop(window); 
+		}
 
 	}
 }
