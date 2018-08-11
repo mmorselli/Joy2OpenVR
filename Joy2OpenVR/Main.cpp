@@ -87,6 +87,7 @@ namespace
 	CString uvctrlid;
 
 	bool windowontop = false;
+	int unresponsiveness;
 	HWND activewindow;
 
 
@@ -813,6 +814,7 @@ int main(int argc,char *argv[])
 	threshold = atof(ini.GetValue("main", "threshold", "1.0"));
 	deadzonerange = atof(ini.GetValue("main", "deadzonerange", "0.2"));
 	windowontop = ToBool(ini.GetValue("main", "WindowOnTop", "false"));
+	unresponsiveness = std::stoi(ini.GetValue("main", "unresponsiveness", "10"));
 
 	// xinput prefs
 	trigger1 = std::stoi(ini.GetValue("buttons", "trigger1", "999"));
@@ -857,7 +859,7 @@ int main(int argc,char *argv[])
 
 	// Create the window of the application
 	sf::String appname="Joy2OpenVR ";
-	appname += "0.9b";
+	appname += "0.10b";
 	sf::RenderWindow window(sf::VideoMode(600, 780), appname, sf::Style::Close);
 	window.setVerticalSyncEnabled(true);
 
@@ -993,6 +995,7 @@ int main(int argc,char *argv[])
 
 	while (window.isOpen())
 	{
+		Sleep(unresponsiveness);
 		// Handle events
 		sf::Event event;
 		while (window.pollEvent(event))
