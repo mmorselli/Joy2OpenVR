@@ -924,7 +924,7 @@ int main(int argc,char *argv[])
 	texts["ID"].label.setPosition(5.f, 5.f + 1 * font.getLineSpacing(14));
 	texts["ID"].value.setPosition(80.f, 5.f + 1 * font.getLineSpacing(14));
 
-	texts["ID"].label.setString("Joypad Not Connected...");
+	texts["ID"].label.setString("Joypad Not Connected..."); 
 	texts["ID"].value.setString("");
 
 	// Target SteamVR Controller ID
