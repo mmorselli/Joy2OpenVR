@@ -52,6 +52,16 @@ namespace
 	CString kmenu2;
 	CString ksystem2;
 	CString kgrip2;
+	CString ktrackpad1left;
+	CString ktrackpad1right;
+	CString ktrackpad1up;
+	CString ktrackpad1down;
+	CString ktrackpad2left;
+	CString ktrackpad2right;
+	CString ktrackpad2up;
+	CString ktrackpad2down;
+	bool ktrackpad1_click;
+	bool ktrackpad2_click;
 
 	// ini trackpad
 	char * xy_axes;
@@ -677,11 +687,63 @@ namespace
 	}
 
 
+	// terminare - gestirere up, down, click e lastcommand
+
+	//************************************************
+	void Ktrackpad(CString id, int action,CString cnum)
+	{
+
+		// 0 = off - 1 = left - 2 = right - 3 = up - 4 = down
+
+		switch (action)
+		{
+		case 0:
+			lastcmd = "trackpad "+cnum+" released";
+			executeCommandLine("client_commandline.exe buttonevent unpress " + id + "  32", exitCode); // touchpad unpressed
+			break;
+		case 1:
+			lastcmd = "trackpad " + cnum + " LEFT";
+			executeCommandLine("client_commandline.exe buttonevent touchandhold " + id + "  32", exitCode);
+			executeCommandLine("client_commandline.exe axisevent " + id + "  0 -1 0", exitCode);
+			break;
+		case 2:
+			lastcmd = "trackpad " + cnum + " RIGHT";
+			executeCommandLine("client_commandline.exe buttonevent touchandhold " + id + "  32", exitCode);
+			executeCommandLine("client_commandline.exe axisevent " + id + "  0 1 0", exitCode);
+			break;
+		case 3:
+			lastcmd = "trackpad " + cnum + " UP";
+			executeCommandLine("client_commandline.exe buttonevent touchandhold " + id + "  32", exitCode);
+			executeCommandLine("client_commandline.exe axisevent " + id + "  0 0 1", exitCode);
+			break;
+		case 4:
+			lastcmd = "trackpad " + cnum + " DOWN";
+			executeCommandLine("client_commandline.exe buttonevent touchandhold " + id + "  32", exitCode);
+			executeCommandLine("client_commandline.exe axisevent " + id + "  0 0 -1", exitCode);
+			break;
+		}
+
+		if (((id == steamvr_controller1_id && ktrackpad1_click) || (id == steamvr_controller2_id && ktrackpad2_click)) && action != 0)
+		{
+			executeCommandLine("client_commandline.exe buttonevent pressandhold " + id + "  32", exitCode);
+			lastcmd = lastcmd + " clicked";
+		}
+
+
+
+		texts["LastCommand"].value.setString((sf::String)lastcmd);
+
+
+
+	}
+
+
 
 	//************************************************
 	// KeyToAction
 	void KeyToAction(CString keypressed,bool pressed)
 	{
+
 
 		// controller1 buttons
 
@@ -710,6 +772,30 @@ namespace
 		if (keypressed == kgrip1)
 		{
 			if (pressed) { grip_down(steamvr_controller1_id); } else { grip_up(steamvr_controller1_id); }
+		}
+
+		// trackpad1 left
+		if (keypressed == ktrackpad1left)
+		{
+			if (pressed) { Ktrackpad(steamvr_controller1_id, 1,"1"); } else { Ktrackpad(steamvr_controller1_id, 0, "1"); }
+		}
+
+		// trackpad1 right
+		if (keypressed == ktrackpad1right)
+		{
+			if (pressed) { Ktrackpad(steamvr_controller1_id, 2, "1"); } else { Ktrackpad(steamvr_controller1_id, 0, "1"); }
+		}
+
+		// trackpad1 up
+		if (keypressed == ktrackpad1up)
+		{
+			if (pressed) { Ktrackpad(steamvr_controller1_id, 3, "1"); } else { Ktrackpad(steamvr_controller1_id, 0, "1"); }
+		}
+
+		// trackpad1 down
+		if (keypressed == ktrackpad1down)
+		{
+			if (pressed) { Ktrackpad(steamvr_controller1_id, 4, "1"); } else { Ktrackpad(steamvr_controller1_id, 0, "1"); }
 		}
 
 
@@ -741,6 +827,33 @@ namespace
 		{
 			if (pressed) { grip_down(steamvr_controller2_id); } else { grip_up(steamvr_controller2_id); }
 		}
+
+
+		// trackpad2 left
+		if (keypressed == ktrackpad2left)
+		{
+			if (pressed) { Ktrackpad(steamvr_controller2_id, 1, "2"); } else { Ktrackpad(steamvr_controller2_id, 0, "2"); }
+		}
+
+		// trackpad2 right
+		if (keypressed == ktrackpad2right)
+		{
+			if (pressed) { Ktrackpad(steamvr_controller2_id, 2, "2"); } else { Ktrackpad(steamvr_controller2_id, 0, "2"); }
+		}
+
+		// trackpad2 up
+		if (keypressed == ktrackpad2up)
+		{
+			if (pressed) { Ktrackpad(steamvr_controller2_id, 3, "2"); } else { Ktrackpad(steamvr_controller2_id, 0, "2"); }
+		}
+
+		// trackpad2 down
+		if (keypressed == ktrackpad2down)
+		{
+			if (pressed) { Ktrackpad(steamvr_controller2_id, 4, "2"); } else { Ktrackpad(steamvr_controller2_id, 0, "2"); }
+		}
+
+
 
 	}
 
@@ -838,6 +951,17 @@ int main(int argc,char *argv[])
 	ksystem2 = (CString)ini.GetValue("keys", "system2", "999");
 	kgrip2 = (CString)ini.GetValue("keys", "grip2", "999");
 
+	ktrackpad1left = (CString)ini.GetValue("keys", "trackpad1left", "999");
+	ktrackpad1right = (CString)ini.GetValue("keys", "trackpad1right", "999");
+	ktrackpad1up = (CString)ini.GetValue("keys", "trackpad1up", "999");
+	ktrackpad1down = (CString)ini.GetValue("keys", "trackpad1down", "999");
+
+	ktrackpad2left = (CString)ini.GetValue("keys", "trackpad2left", "999");
+	ktrackpad2right = (CString)ini.GetValue("keys", "trackpad2right", "999");
+	ktrackpad2up = (CString)ini.GetValue("keys", "trackpad2up", "999");
+	ktrackpad2down = (CString)ini.GetValue("keys", "trackpad2down", "999");
+	ktrackpad1_click = ToBool(ini.GetValue("keys", "trackpad1_click", "false"));
+	ktrackpad2_click = ToBool(ini.GetValue("keys", "trackpad2_click", "false"));
 
 	// axes
 	xy_axes = (char *)ini.GetValue("axes", "xy_axes", "");
@@ -859,7 +983,7 @@ int main(int argc,char *argv[])
 
 	// Create the window of the application
 	sf::String appname="Joy2OpenVR ";
-	appname += "0.10b";
+	appname += "0.11b";
 	sf::RenderWindow window(sf::VideoMode(600, 780), appname, sf::Style::Close);
 	window.setVerticalSyncEnabled(true);
 
