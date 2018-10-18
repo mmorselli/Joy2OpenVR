@@ -699,6 +699,7 @@ namespace
 		{
 		case 0:
 			lastcmd = "trackpad "+cnum+" released";
+			executeCommandLine("client_commandline.exe axisevent " + id + "  0 0 0", exitCode);
 			executeCommandLine("client_commandline.exe buttonevent unpress " + id + "  32", exitCode); // touchpad unpressed
 			break;
 		case 1:
