@@ -3,9 +3,8 @@
 
 Interface to [OpenVR Input Emulator](https://github.com/matzman666/OpenVR-InputEmulator) to translate any Direct Input controllers commands into VR Controller commands, used, for example, to play VR Games with Cabela TopShot Elite equipped with a Vive Trackers
 
-## NOTE: until OpenVR Input Emulator update you will most likely need SteamVR "v1527117754 - 6/21/2018 hotfix", optin in the app properties
-
-## otherwise try this version: https://github.com/sharkyh20/OpenVR-InputEmulator
+## 2018/28/11
+## with newer SteamVR versions you should use this Input Emulator release: https://github.com/sharkyh20/OpenVR-InputEmulator
 
 # Usage
 
