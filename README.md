@@ -32,6 +32,8 @@ restart SteamVR and check the version (should be v1527117754 )
 
 save the downloaded folders, in case Steam auto updates SteamVR
 
+with this SteamVR Version you should use the original matzman666 OpenVR-InputEmulator, not the updated forks
+
 # ===============================
 
 
