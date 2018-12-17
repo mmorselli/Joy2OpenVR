@@ -3,10 +3,37 @@
 
 Interface to [OpenVR Input Emulator](https://github.com/matzman666/OpenVR-InputEmulator) to translate any Direct Input controllers commands into VR Controller commands, used, for example, to play VR Games with Cabela TopShot Elite equipped with a Vive Trackers
 
-## 2018/28/11
- ~~with newer SteamVR versions you should use this Input Emulator release: https://github.com/sharkyh20/OpenVR-InputEmulator~~
+# ===============================
+# In order to work, you will need an old version of SteamVR that is no longer publicly distributed. To get it:
 
-# client_commandline.exe does not actually work with current versions of SteamVR. Waiting for a working version...
+close SteamVR
+
+open the Steam Console: steam://nav/console
+
+write
+
+```
+download_depot 250820 250821 3421602455583112663 :(OpenVR Win32 - May 23, 2018 – 23:57:16 UTC 	7 months ago 	3421602455583112663)
+download_depot 250820 250824 4898477677958363876 :(OpenVR Content - May 23, 2018 – 23:57:16 UTC 	7 months ago 	4898477677958363876)
+download_depot 250820 250827 2641363748675296424 :(OpenVR Content 2 - May 3, 2018 – 18:54:29 UTC 	8 months ago 	2641363748675296424)
+```
+
+go to: 
+
+C:\Program Files (x86)\Steam\steamapps\common\
+
+rename actual SteamVR folder (i.e. SteamVR.org )
+
+create new empty SteamVR folder
+
+put the contents of the 3 downloaded folders (depot_250821, depot_250824, depot_250827) into new empty SteamVR Folder
+
+restart SteamVR and check the version (should be v1527117754 )
+
+save the downloaded folders, in case Steam auto updates SteamVR
+
+# ===============================
+
 
 # Usage
 
