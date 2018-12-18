@@ -38,7 +38,7 @@ StateFlags = 4
 ```
 in "appmanifest_250820.acf" under steamapps folder.
 
-With this SteamVR Version you should use the original matzman666 OpenVR-InputEmulator, not the updated forks
+With this SteamVR Version you should use the original matzman666 [OpenVR-InputEmulator](https://github.com/matzman666/OpenVR-InputEmulator), not the updated forks
 
 # ===============================
 
