@@ -30,7 +30,13 @@ put the contents of the 3 downloaded folders (depot_250821, depot_250824, depot_
 
 restart SteamVR and check the version (should be v1527117754 )
 
-save the downloaded folders, in case Steam auto updates SteamVR, btw you can block update of SteamVR putting StateFlags = 4 in "appmanifest_250820.acf" under steamapps folder
+save the downloaded folders, in case Steam auto updates SteamVR, btw you can block update of SteamVR putting 
+
+```
+StateFlags = 4
+
+```
+in "appmanifest_250820.acf" under steamapps folder
 
 with this SteamVR Version you should use the original matzman666 OpenVR-InputEmulator, not the updated forks
 
