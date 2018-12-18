@@ -36,9 +36,9 @@ save the downloaded folders, in case Steam auto updates SteamVR, btw you can blo
 StateFlags = 4
 
 ```
-in "appmanifest_250820.acf" under steamapps folder
+in "appmanifest_250820.acf" under steamapps folder.
 
-with this SteamVR Version you should use the original matzman666 OpenVR-InputEmulator, not the updated forks
+With this SteamVR Version you should use the original matzman666 OpenVR-InputEmulator, not the updated forks
 
 # ===============================
 
