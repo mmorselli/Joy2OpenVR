@@ -10,7 +10,7 @@ close SteamVR
 
 open the Steam Console: steam://nav/console
 
-write
+download this three packages entering this command lines
 
 ```
 download_depot 250820 250821 3421602455583112663 :(OpenVR Win32 - May 23, 2018 – 23:57:16 UTC 	7 months ago 	3421602455583112663)
